@@ -112,21 +112,21 @@ for folder_name in os.listdir(saved_model_dir):
         _,_,bvae_latent_val = encoder.predict(X_val,batch_size=64)
 
 
-        no_iterations = 1
+        no_iterations = 50
         # sampler_seed = random.randint(0, 2 ** 16)
         sampler_seed = 11
         no_k_folds = 3
 
         # list of classifiers to test
         classifier_list_all = [
-            # random_forest_classifier,
-            # knn_classifier,
-            # logistic_regression,
-            # sgd_classifier,
-            # ridge_classifier,
-            # svm_classifier,
+            random_forest_classifier,
+            knn_classifier,
+            logistic_regression,
+            sgd_classifier,
+            ridge_classifier,
+            svm_classifier,
             gaussian_nb_classifier,
-            # xgboost_classifier,
+            xgboost_classifier,
         ]
 
         imbalance_ratios = [0.5,0.8,1]
@@ -134,9 +134,9 @@ for folder_name in os.listdir(saved_model_dir):
         over_under_sampling_methods = [
             "random_over",
             "random_under",
-        #     "random_under_bootstrap",
-        #     "smote",
-        #     "adasyn",
+            "random_under_bootstrap",
+            # "smote",
+            # "adasyn",
             None,
         ]
 
