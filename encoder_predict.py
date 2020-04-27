@@ -49,7 +49,8 @@ print('Tensorboard version:', tensorboard.__version__)
 current_dir = Path.cwd()
 saved_model_dir = current_dir / 'practice_models'
 
-processed_data = Path('/home/tim/Documents/milling/data/processed/scale_0_to_1_mashed')
+# processed_data = Path('/home/tim/Documents/milling/data/processed/scale_0_to_1_mashed')
+processed_data = Path('/home/tvhahn/projects/def-mechefsk/tvhahn/milling_data/processed')
 
 (X_train, y_train, 
 X_train_slim, y_train_slim,
