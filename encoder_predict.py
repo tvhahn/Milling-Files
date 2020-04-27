@@ -52,6 +52,8 @@ saved_model_dir = current_dir / 'practice_models'
 # processed_data = Path('/home/tim/Documents/milling/data/processed/scale_0_to_1_mashed')
 processed_data = Path('/home/tvhahn/projects/def-mechefsk/tvhahn/milling_data/processed/scale_0_to_1_mashed')
 
+date_time = datetime.now().strftime("%Y.%m.%d-%H.%M.%S")
+
 (X_train, y_train, 
 X_train_slim, y_train_slim,
 X_val, y_val,
@@ -112,7 +114,7 @@ for folder_name in os.listdir(saved_model_dir):
         _,_,bvae_latent_val = encoder.predict(X_val,batch_size=64)
 
 
-        no_iterations = 50
+        no_iterations = 100
         # sampler_seed = random.randint(0, 2 ** 16)
         sampler_seed = 11
         no_k_folds = 3
@@ -121,20 +123,20 @@ for folder_name in os.listdir(saved_model_dir):
         classifier_list_all = [
             random_forest_classifier,
             knn_classifier,
-            logistic_regression,
-            sgd_classifier,
-            ridge_classifier,
-            svm_classifier,
-            gaussian_nb_classifier,
+            # logistic_regression,
+            # sgd_classifier,
+            # ridge_classifier,
+            # svm_classifier,
+            # gaussian_nb_classifier,
             xgboost_classifier,
         ]
 
-        imbalance_ratios = [0.5,0.8,1]
+        imbalance_ratios = [1]
 
         over_under_sampling_methods = [
             "random_over",
             "random_under",
-            "random_under_bootstrap",
+            # "random_under_bootstrap",
             # "smote",
             # "adasyn",
             None,
@@ -158,7 +160,7 @@ for folder_name in os.listdir(saved_model_dir):
         #############################################################################
         # run models with each of the parameters
 
-        date_time = datetime.now().strftime("%Y.%m.%d-%H.%M.%S")
+
 
         for k, p in enumerate(p_list):
             print(p)
@@ -207,5 +209,5 @@ for folder_name in os.listdir(saved_model_dir):
                 )
                 df_results['model_date'] = date_model_ran
         df_all = df_all.append(df_results)
-        df_all.to_csv('interim_encoder_results.csv')
+        df_all.to_csv('interim_encoder_results_{}.csv'.format(date_time))
         counter += 1
