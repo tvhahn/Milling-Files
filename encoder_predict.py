@@ -259,6 +259,11 @@ for folder_name in os.listdir(saved_model_dir):
                 )
                 df_results["model_date"] = date_model_ran
         df_all = df_all.append(df_results)
-        Path("temp_{}".format(folder_to_get_data)).mkdir(parents=True, exist_ok=True)
-        df_all.to_csv("temp_csv_{}/interim_encoder_results_{}.csv".format(folder_to_get_data, file_folder_index))
+
+        save_folder_name = 'temp_results_{}'.format(folder_to_get_data)
+        root_folder = Path('/home/tvhahn/Milling-Files')
+
+        Path(root_folder / save_folder_name).mkdir(parents=True, exist_ok=True)
+
+        df_all.to_csv(root_folder / save_folder_name / "interim_encoder_results_{}.csv".format(file_folder_index))
         counter += 1
