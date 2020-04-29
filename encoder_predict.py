@@ -41,8 +41,12 @@ from tensorflow.keras.models import model_from_json
 
 # stop warnings from sklearn
 # https://stackoverflow.com/questions/32612180/eliminating-warnings-from-scikit-learn
+# https://stackoverflow.com/a/15778297
 def warn(*args, **kwargs):
     pass
+import warnings
+warnings.warn = warn
+warnings.simplefilter(action='ignore', category=FutureWarning)
 
 
 print("TensorFlow version: ", tf.__version__)
