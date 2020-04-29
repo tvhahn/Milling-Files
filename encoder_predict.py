@@ -7,6 +7,9 @@ from pathlib import Path
 from datetime import datetime
 import os
 import random
+import sys
+from zipfile import ZipFile
+import zipfile
 
 import data_transforms
 from tcn import TCN
@@ -41,27 +44,62 @@ from tensorflow.keras.models import model_from_json
 def warn(*args, **kwargs):
     pass
 
-print('TensorFlow version: ', tf.__version__)
-print('Keras version: ', keras.__version__)
-print('Tensorboard version:', tensorboard.__version__)
 
-# Load the data
-current_dir = Path.cwd()
-saved_model_dir = current_dir / 'practice_models'
+print("TensorFlow version: ", tf.__version__)
+print("Keras version: ", keras.__version__)
+print("Tensorboard version:", tensorboard.__version__)
+
+#### setup the zip files and extract them
+# location of the zip folders the tensorflow encoder models
+
+#!#!# INPUT FOLDER NAME HERE THAT CONTAINS ZIP FILES OF ENCODERS
+folder_to_get_data = "2020.04.22_results_1_zip"
+
+zip_path = (
+    Path("/home/tvhahn/projects/def-mechefsk/tvhahn/milling_data/results")
+    / folder_to_get_data
+)
+
+#### setup the location where the zip files will be extracted to on the scratch
+# folder location will be created if does not already exist
+Path("/home/tvhahn/scratch/interim_data_encoder").mkdir(parents=True, exist_ok=True)
+scratch_path = Path("/home/tvhahn/scratch/interim_data_encoder")
+
+file_name = sys.argv[1]
+file_folder_index = file_name.split(sep=".")[0]
+
+# extract zip file
+with ZipFile(zip_path / file_name, "r") as zip_file:
+    # setup the location where the split cut data will be stored.
+    # folder location will be created if does not already exist
+    zip_file.extractall(path=(scratch_path / file_folder_index))
+
+# location of all the split signals (these are all the pickles that were created in the create_split_data.py)
+saved_model_dir = scratch_path / file_folder_index
+
 
 # processed_data = Path('/home/tim/Documents/milling/data/processed/scale_0_to_1_mashed')
-processed_data = Path('/home/tvhahn/projects/def-mechefsk/tvhahn/milling_data/processed/scale_0_to_1_mashed')
+processed_data = Path(
+    "/home/tvhahn/projects/def-mechefsk/tvhahn/milling_data/processed/scale_0_to_1_mashed"
+)
 
 date_time = datetime.now().strftime("%Y.%m.%d-%H.%M.%S")
 
-(X_train, y_train, 
-X_train_slim, y_train_slim,
-X_val, y_val,
-X_val_slim, y_val_slim,
-X_test,y_test) = data_transforms.load_train_test(processed_data)
+(
+    X_train,
+    y_train,
+    X_train_slim,
+    y_train_slim,
+    X_val,
+    y_val,
+    X_val_slim,
+    y_val_slim,
+    X_test,
+    y_test,
+) = data_transforms.load_train_test(processed_data)
 
 # rename the classes so it is a binary problem
-class_to_remove = np.array([2],dtype='uint8')
+class_to_remove = np.array([2], dtype="uint8")
 
 new_y_val = []
 for i in y_val:
@@ -78,7 +116,7 @@ for i in y_train:
     else:
         new_y_train.append(-1)
 new_y_train = np.array(new_y_train)
-        
+
 new_y_test = []
 for i in y_test:
     if i in class_to_remove:
@@ -90,31 +128,37 @@ new_y_test = np.array(new_y_test)
 # for keras models
 K = keras.backend
 
+
 class Sampling(keras.layers.Layer):
     def call(self, inputs):
         mean, log_var = inputs
         return K.random_normal(tf.shape(log_var)) * K.exp(log_var / 2) + mean
 
+
 # rounded accuracy for the metric
 def rounded_accuracy(y_true, y_pred):
     return keras.metrics.binary_accuracy(tf.round(y_true), tf.round(y_pred))
+
 
 # sweep through models
 df_all = pd.DataFrame()
 counter = 1
 for folder_name in os.listdir(saved_model_dir):
-    if 'encoder' in folder_name:
-        date_model_ran = folder_name.split('_')[0]
+    if "encoder" in folder_name:
+        date_model_ran = folder_name.split("_")[0]
         print(date_model_ran, counter)
 
-        loaded_json = open(r'{}/{}/model.json'.format(saved_model_dir,folder_name), 'r').read()
-        encoder = model_from_json(loaded_json, custom_objects={'TCN': TCN, 'Sampling': Sampling})
+        loaded_json = open(
+            r"{}/{}/model.json".format(saved_model_dir, folder_name), "r"
+        ).read()
+        encoder = model_from_json(
+            loaded_json, custom_objects={"TCN": TCN, "Sampling": Sampling}
+        )
 
-        _,_,bvae_latent_train = encoder.predict(X_train,batch_size=64)
-        _,_,bvae_latent_val = encoder.predict(X_val,batch_size=64)
+        _, _, bvae_latent_train = encoder.predict(X_train, batch_size=64)
+        _, _, bvae_latent_val = encoder.predict(X_val, batch_size=64)
 
-
-        no_iterations = 100
+        no_iterations = 50
         # sampler_seed = random.randint(0, 2 ** 16)
         sampler_seed = 11
         no_k_folds = 3
@@ -160,8 +204,6 @@ for folder_name in os.listdir(saved_model_dir):
         #############################################################################
         # run models with each of the parameters
 
-
-
         for k, p in enumerate(p_list):
             print(p)
 
@@ -193,21 +235,30 @@ for folder_name in os.listdir(saved_model_dir):
 
             # save classifier parameters into dataframe
             df_cpam = pd.DataFrame.from_dict(classifier_parameters, orient="index").T
-            
-            result_dict, final_clf = classifier_train(bvae_latent_train,new_y_train,bvae_latent_val,new_y_val,
-                                        clf,k_fold_no=no_k_folds,print_results=False,train_on_all=True)
-            
+
+            result_dict, final_clf = classifier_train(
+                bvae_latent_train,
+                new_y_train,
+                bvae_latent_val,
+                new_y_val,
+                clf,
+                k_fold_no=no_k_folds,
+                print_results=False,
+                train_on_all=True,
+            )
+
             df_result_dict = pd.DataFrame.from_dict(result_dict, orient="index").T
-                # df_result_dict.astype("float16").dtypes
+            # df_result_dict.astype("float16").dtypes
 
             if k == 0:
                 df_results = pd.concat([df_gpam, df_cpam, df_result_dict], axis=1)
-                df_results['model_date'] = date_model_ran
+                df_results["model_date"] = date_model_ran
             else:
                 df_results = df_results.append(
                     pd.concat([df_gpam, df_cpam, df_result_dict], axis=1)
                 )
-                df_results['model_date'] = date_model_ran
+                df_results["model_date"] = date_model_ran
         df_all = df_all.append(df_results)
-        df_all.to_csv('interim_encoder_results_{}.csv'.format(date_time))
+        Path("temp_{}".format(folder_to_get_data)).mkdir(parents=True, exist_ok=True)
+        df_all.to_csv("temp_csv_{}/interim_encoder_results_{}.csv".format(folder_to_get_data, file_folder_index))
         counter += 1
