@@ -13,8 +13,9 @@ virtualenv --no-download $SLURM_TMPDIR/env
 source $SLURM_TMPDIR/env/bin/activate
 pip install --no-index --upgrade pip
 pip install --no-index tensorflow_cpu
+pip install --no-index scikit_learn
 # pip install --no-index h5py
-pip install scikit-learn
+# pip install scikit-learn
 # pip install /home/tvhahn/scikit-learn-0.22.2.post1.tar.gz
 # pip install /home/tvhahn/scikit_learn-0.22.1-cp37-cp37m-linux_x86_64.whl
 # pip install /home/tvhahn/imbalanced_learn-0.6.1-py3-none-any.whl
