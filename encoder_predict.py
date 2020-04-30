@@ -171,7 +171,7 @@ for folder_name in os.listdir(saved_model_dir):
         _, _, bvae_latent_train = encoder.predict(X_train, batch_size=64)
         _, _, bvae_latent_val = encoder.predict(X_val, batch_size=64)
 
-        no_iterations = 1
+        no_iterations = 10
         # sampler_seed = random.randint(0, 2 ** 16)
         sampler_seed = 11
         no_k_folds = 3
