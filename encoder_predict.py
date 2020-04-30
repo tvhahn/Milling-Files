@@ -64,10 +64,19 @@ zip_path = (
     / folder_to_get_data
 )
 
+# # zip path if run on local computer
+# zip_path = (
+#     Path("/home/tim/Documents/Milling-Files")
+#     / folder_to_get_data
+# )
+
 #### setup the location where the zip files will be extracted to on the scratch
 # folder location will be created if does not already exist
 Path("/home/tvhahn/scratch/interim_data_encoder").mkdir(parents=True, exist_ok=True)
 scratch_path = Path("/home/tvhahn/scratch/interim_data_encoder")
+
+# Path("/home/tim/Documents/Milling-Files/_temp").mkdir(parents=True, exist_ok=True)
+# scratch_path = Path("/home/tim/Documents/Milling-Files/_temp")
 
 file_name = sys.argv[1]
 file_folder_index = file_name.split(sep=".")[0]
@@ -162,7 +171,7 @@ for folder_name in os.listdir(saved_model_dir):
         _, _, bvae_latent_train = encoder.predict(X_train, batch_size=64)
         _, _, bvae_latent_val = encoder.predict(X_val, batch_size=64)
 
-        no_iterations = 50
+        no_iterations = 1
         # sampler_seed = random.randint(0, 2 ** 16)
         sampler_seed = 11
         no_k_folds = 3
@@ -265,6 +274,7 @@ for folder_name in os.listdir(saved_model_dir):
         df_all = df_all.append(df_results)
 
         save_folder_name = 'temp_results_{}'.format(folder_to_get_data)
+        # root_folder = Path('/home/tim/Documents/Milling-Files')
         root_folder = Path('/home/tvhahn/Milling-Files')
 
         Path(root_folder / save_folder_name).mkdir(parents=True, exist_ok=True)
