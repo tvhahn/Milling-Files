@@ -24,7 +24,7 @@ from classification_methods import (
     ridge_classifier,
     svm_classifier,
     gaussian_nb_classifier,
-    xgboost_classifier,
+    # xgboost_classifier,
 )
 
 from sklearn.model_selection import ParameterSampler
@@ -185,14 +185,14 @@ for folder_name in os.listdir(saved_model_dir):
             # ridge_classifier,
             # svm_classifier,
             # gaussian_nb_classifier,
-            xgboost_classifier,
+            # xgboost_classifier,
         ]
 
         imbalance_ratios = [1]
 
         over_under_sampling_methods = [
-            "random_over",
-            "random_under",
+            # "random_over",
+            # "random_under",
             # "random_under_bootstrap",
             # "smote",
             # "adasyn",

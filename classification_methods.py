@@ -11,7 +11,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression, SGDClassifier, RidgeClassifier
 from sklearn.svm import SVC
 from sklearn.naive_bayes import GaussianNB
-from xgboost import XGBClassifier
+# from xgboost import XGBClassifier
 
 def build_classifier_parameter_dict(clf, p_clf):
 

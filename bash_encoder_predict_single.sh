@@ -14,8 +14,8 @@ source $SLURM_TMPDIR/env/bin/activate
 pip install --no-index --upgrade pip
 pip install --no-index tensorflow_cpu
 # pip install --no-index h5py
-pip install /home/tvhahn/scikit_learn-0.22.1-cp37-cp37m-linux_x86_64.whl
-pip install /home/tvhahn/imbalanced_learn-0.6.1-py3-none-any.whl
-pip install /home/tvhahn/xgboost-0.90-cp37-cp37m-linux_x86_64.whl
+# pip install /home/tvhahn/scikit_learn-0.22.1-cp37-cp37m-linux_x86_64.whl
+# pip install /home/tvhahn/imbalanced_learn-0.6.1-py3-none-any.whl
+# pip install /home/tvhahn/xgboost-0.90-cp37-cp37m-linux_x86_64.whl
 
 python encoder_predict.py 7.zip
