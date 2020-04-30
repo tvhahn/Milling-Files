@@ -171,7 +171,7 @@ for folder_name in os.listdir(saved_model_dir):
         _, _, bvae_latent_train = encoder.predict(X_train, batch_size=64)
         _, _, bvae_latent_val = encoder.predict(X_val, batch_size=64)
 
-        no_iterations = 10
+        no_iterations = 100
         # sampler_seed = random.randint(0, 2 ** 16)
         sampler_seed = 11
         no_k_folds = 3
@@ -279,5 +279,5 @@ for folder_name in os.listdir(saved_model_dir):
 
             Path(root_folder / save_folder_name).mkdir(parents=True, exist_ok=True)
 
-            df_all.to_csv(root_folder / save_folder_name / "interim_encoder_results_{}.csv".format(file_folder_index))
+            df_all.to_csv(root_folder / save_folder_name / "interim_encoder_results_{}_{}.csv".format(file_folder_index,date_time))
         counter += 1
