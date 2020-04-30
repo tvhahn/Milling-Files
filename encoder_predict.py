@@ -168,10 +168,16 @@ for folder_name in os.listdir(saved_model_dir):
             loaded_json, custom_objects={"TCN": TCN, "Sampling": Sampling}
         )
 
+        print('Beginning encoder output for {}....'.format(file_name))
         _, _, bvae_latent_train = encoder.predict(X_train, batch_size=64)
         _, _, bvae_latent_val = encoder.predict(X_val, batch_size=64)
+        print('bvae_latent_train max:', np.max(bvae_latent_train))
+        print('bvae_latent_train has nan:', np.isnan(bvae_latent_train))
+        print('bvae_latent_val max:', np.max(bvae_latent_val))
+        print('bvae_latent_val has nan:', np.isnan(bvae_latent_val))
 
-        no_iterations = 100
+
+        no_iterations = 40
         # sampler_seed = random.randint(0, 2 ** 16)
         sampler_seed = 11
         no_k_folds = 3
@@ -271,13 +277,13 @@ for folder_name in os.listdir(saved_model_dir):
                     pd.concat([df_gpam, df_cpam, df_result_dict], axis=1)
                 )
                 df_results["model_date"] = date_model_ran
-            df_all = df_all.append(df_results)
+        df_all = df_all.append(df_results)
 
-            save_folder_name = 'temp_results_{}'.format(folder_to_get_data)
-            # root_folder = Path('/home/tim/Documents/Milling-Files')
-            root_folder = Path('/home/tvhahn/Milling-Files')
+        save_folder_name = 'temp_results_{}'.format(folder_to_get_data)
+        # root_folder = Path('/home/tim/Documents/Milling-Files')
+        root_folder = Path('/home/tvhahn/Milling-Files')
 
-            Path(root_folder / save_folder_name).mkdir(parents=True, exist_ok=True)
+        Path(root_folder / save_folder_name).mkdir(parents=True, exist_ok=True)
 
-            df_all.to_csv(root_folder / save_folder_name / "interim_encoder_results_{}_{}.csv".format(file_folder_index,date_time))
+        df_all.to_csv(root_folder / save_folder_name / "interim_encoder_results_{}_{}.csv".format(file_folder_index,date_time))
         counter += 1
